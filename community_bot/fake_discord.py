@@ -681,7 +681,13 @@ async def serve(fake: FakeDiscord, host: str = "127.0.0.1", port: int = 0) -> Ca
     fake.base_url = f"http://{host}:{port}"
     server = uvicorn.Server(uvicorn.Config(fake.app, log_level="warning", ws="websockets-sansio", lifespan="off"))
     task = asyncio.get_event_loop().create_task(server.serve(sockets=[sock]))
+    deadline = time.monotonic() + 10
     while not server.started:
+        if task.done():  # uvicorn gave up: surface why instead of waiting forever
+            task.result()
+            raise RuntimeError("fake Discord server stopped before it started")
+        if time.monotonic() > deadline:
+            raise TimeoutError("fake Discord server did not start within 10 s")
         await asyncio.sleep(0.01)
 
     async def stop():
