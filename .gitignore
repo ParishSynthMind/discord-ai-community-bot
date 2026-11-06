@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.env
+*.db
+*.db-*
+PORTFOLIO-LISTING.md
+ACCOUNT-NEEDS.md
+live-run/

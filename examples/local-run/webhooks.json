@@ -1,0 +1,114 @@
+[
+  {
+    "label": "Stripe invoice.paid (arrives before the checkout)",
+    "path": "/webhooks/stripe",
+    "http": 200,
+    "response": {
+      "received": true,
+      "status": "recorded",
+      "type": "invoice.paid"
+    }
+  },
+  {
+    "label": "Stripe checkout.session.completed",
+    "path": "/webhooks/stripe",
+    "http": 200,
+    "response": {
+      "received": true,
+      "status": "applied",
+      "type": "checkout.session.completed",
+      "role": "1300000000000000101",
+      "link_status": "active",
+      "role_change": "added"
+    }
+  },
+  {
+    "label": "same event redelivered",
+    "path": "/webhooks/stripe",
+    "http": 200,
+    "response": {
+      "received": true,
+      "status": "duplicate",
+      "event_id": "evt_1QLocalCheckout"
+    }
+  },
+  {
+    "label": "forged signature",
+    "path": "/webhooks/stripe",
+    "http": 400,
+    "response": {
+      "error": "signature does not match"
+    }
+  },
+  {
+    "label": "replayed, an hour old",
+    "path": "/webhooks/stripe",
+    "http": 400,
+    "response": {
+      "error": "timestamp outside the 300s window (replayed or clock skew)"
+    }
+  },
+  {
+    "label": "Stripe invoice.payment_failed",
+    "path": "/webhooks/stripe",
+    "http": 200,
+    "response": {
+      "received": true,
+      "status": "applied",
+      "type": "invoice.payment_failed",
+      "role": "1300000000000000101",
+      "link_status": "past_due",
+      "role_change": "unchanged"
+    }
+  },
+  {
+    "label": "Stripe invoice.paid (card updated)",
+    "path": "/webhooks/stripe",
+    "http": 200,
+    "response": {
+      "received": true,
+      "status": "applied",
+      "type": "invoice.paid",
+      "role": "1300000000000000101",
+      "link_status": "active",
+      "role_change": "unchanged"
+    }
+  },
+  {
+    "label": "Lemon Squeezy subscription_created",
+    "path": "/webhooks/lemonsqueezy",
+    "http": 200,
+    "response": {
+      "received": true,
+      "status": "applied",
+      "type": "subscription_created",
+      "role": "1300000000000000101",
+      "link_status": "active",
+      "role_change": "added"
+    }
+  },
+  {
+    "label": "Calendly invitee.created",
+    "path": "/webhooks/calendly",
+    "http": 200,
+    "response": {
+      "received": true,
+      "status": "applied",
+      "event": "invitee.created",
+      "role_change": "added"
+    }
+  },
+  {
+    "label": "Stripe customer.subscription.deleted",
+    "path": "/webhooks/stripe",
+    "http": 200,
+    "response": {
+      "received": true,
+      "status": "applied",
+      "type": "customer.subscription.deleted",
+      "role": "1300000000000000101",
+      "link_status": "canceled",
+      "role_change": "removed"
+    }
+  }
+]

@@ -1,0 +1,10 @@
+{% extends "base.html" %}{% block body %}
+<h1>{{ title }}</h1>
+{% if rows %}<table><tr>{% for c in columns %}<th>{{ c }}</th>{% endfor %}</tr>
+{% for r in rows %}<tr>{% for v in r %}<td class="{{ v if v is string and v.split(' ')[0] in ['active','past_due','canceled','canceling','lapsed','yes','no','ok','failed','paid','applied','duplicate','stale','ignored','unlinked','sent','pending','dead','queued_retry','member_not_in_server'] else '' }}">{{ v }}</td>{% endfor %}</tr>{% endfor %}</table>
+{% else %}<div class="empty">Nothing yet.</div>{% endif %}
+{% if extra_title %}<h2>{{ extra_title }}</h2>
+{% if extra_rows %}<table><tr>{% for c in extra_columns %}<th>{{ c }}</th>{% endfor %}</tr>
+{% for r in extra_rows %}<tr>{% for v in r %}<td class="{{ v if v is string else '' }}">{{ v }}</td>{% endfor %}</tr>{% endfor %}</table>
+{% else %}<div class="empty">Nothing yet.</div>{% endif %}{% endif %}
+{% endblock %}

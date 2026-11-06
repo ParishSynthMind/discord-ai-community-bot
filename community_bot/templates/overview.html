@@ -1,0 +1,17 @@
+{% extends "base.html" %}{% block body %}
+<h1>Overview</h1>
+<div class="tiles">
+ <div class="tile"><div class="k">Premium members</div><div class="v">{{ d.premium_active }}</div></div>
+ <div class="tile"><div class="k">Payment failed (in grace)</div><div class="v">{{ d.past_due }}</div></div>
+ <div class="tile"><div class="k">Ended</div><div class="v">{{ d.canceled }}</div></div>
+ <div class="tile"><div class="k">Paid this month</div><div class="v" style="font-size:20px">{{ d.revenue_month }}</div></div>
+ <div class="tile"><div class="k">Known members</div><div class="v">{{ d.members }}</div></div>
+ <div class="tile"><div class="k">Open tickets</div><div class="v">{{ d.open_tickets }}</div></div>
+ <div class="tile"><div class="k">AI answers today</div><div class="v">{{ d.ai_today }} <small>of {{ d.ai_cap }}</small></div></div>
+ <div class="tile"><div class="k">Retry queues</div><div class="v" style="font-size:16px;line-height:1.5">roles: {{ d.role_pending }} waiting, {{ d.role_failed }} failed<br>hooks: {{ d.hooks_pending }} waiting, {{ d.hooks_dead }} dead</div></div>
+</div>
+<h2>Needs attention</h2>
+{% if d.needs_attention %}<table><tr><th>When</th><th>Action</th><th>Member</th><th>Reason</th><th>Result</th></tr>
+{% for a in d.needs_attention %}<tr><td>{{ a.at|when }}</td><td>{{ a.action }}</td><td class="mono">{{ a.discord_user_id or '' }}</td><td>{{ a.reason or '' }}</td><td class="failed">{{ a.result }}</td></tr>{% endfor %}</table>
+{% else %}<div class="empty">Nothing. Every role change and payment event went through.</div>{% endif %}
+{% endblock %}

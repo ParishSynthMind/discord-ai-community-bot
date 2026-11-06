@@ -1,0 +1,57 @@
+# Settings for one community. IDs are Discord snowflakes (right-click > Copy ID with
+# Developer Mode on). Nothing in this file is secret: tokens and signing secrets come
+# from the environment or the macOS Keychain (see .env.example).
+
+community_name: Pixelforge Creators Club
+guild_id: "1300000000000000001"
+
+roles:
+  premium: "1300000000000000101"        # granted while a paid membership is active
+  call_booked: "1300000000000000102"    # granted while a Calendly call is booked (optional)
+
+channels:
+  mod_queue: "1300000000000000201"      # tickets and handovers land here (private to mods)
+  bookings: "1300000000000000202"       # "X booked a call" notices (optional)
+
+# Discord gateway intents. Slash commands need none of the privileged ones.
+# members: true turns on new-member events (on_member_join) and the role reconcile
+# member list. It is a privileged intent, so it must also be switched on in the
+# Developer Portal (Bot > Privileged Gateway Intents > Server Members Intent).
+intents:
+  members: false
+
+ai:
+  provider: anthropic                   # anthropic | gemini
+  model: claude-sonnet-5-5              # gemini default: gemini-3.5-flash-lite
+  max_tokens: 900
+  daily_cap_total: 200                  # model calls per day for the whole server
+  daily_cap_per_user: 10                # model calls per member per day
+  max_sections: 5                       # knowledge-base sections sent per question
+  handover_when_not_found: true         # open a ticket when the answer is not in the KB
+  public_answers: true                  # answers visible in the channel; false = only the asker sees them
+
+knowledge_base: knowledge_base
+
+membership:
+  # Which role each paid plan gives. Keys are the provider's price/variant ids;
+  # anything not listed gets roles.premium.
+  plans: {}
+  # A failed renewal keeps the role for this many days while the payment provider
+  # retries the card. 0 = remove the role on the first failed payment.
+  past_due_grace_days: 3
+  # Where /premium sends people. {discord_user_id} is filled in, so the payment is
+  # tied to the right member without asking them to type anything.
+  checkout_url: "https://buy.stripe.com/test_00000000000000?client_reference_id={discord_user_id}"
+  webhook_tolerance_seconds: 300
+
+hooks:
+  # Outbound events for n8n, Make, Zapier or a CRM. Signed with HOOK_SIGNING_SECRET.
+  url: ""                               # e.g. https://your-n8n/webhook/community
+  events: [member.joined, member.left, ticket.opened, ticket.closed, lead.captured,
+           premium.granted, premium.removed, booking.created, booking.canceled]
+
+calendly:
+  # /book hands out this link with utm_content={discord_user_id}, so a booking can be
+  # matched to the member. A "Discord username" question on the event type is the fallback.
+  booking_url: "https://calendly.com/your-name/intro-call?utm_content={discord_user_id}"
+  discord_question: "Discord username"

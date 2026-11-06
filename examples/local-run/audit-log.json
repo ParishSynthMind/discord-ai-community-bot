@@ -1,0 +1,46 @@
+[
+  {
+    "id": 4,
+    "at": 1793973252.0054688,
+    "actor": "webhook",
+    "action": "remove_role",
+    "discord_user_id": "1300000000000009001",
+    "role_id": "1300000000000000101",
+    "reason": "stripe customer.subscription.deleted",
+    "ref": "evt_1QLocalDeleted",
+    "result": "ok"
+  },
+  {
+    "id": 3,
+    "at": 1793973248.912235,
+    "actor": "calendly",
+    "action": "add_role",
+    "discord_user_id": "1300000000000009002",
+    "role_id": "1300000000000000102",
+    "reason": "Calendly booking",
+    "ref": "https://api.calendly.com/scheduled_events/EVLOCAL/invitees/INVLOCAL",
+    "result": "ok"
+  },
+  {
+    "id": 2,
+    "at": 1793973248.899141,
+    "actor": "webhook",
+    "action": "add_role",
+    "discord_user_id": "1300000000000009002",
+    "role_id": "1300000000000000101",
+    "reason": "lemonsqueezy subscription_created",
+    "ref": "ls-delivery-1",
+    "result": "ok"
+  },
+  {
+    "id": 1,
+    "at": 1793973247.009789,
+    "actor": "webhook",
+    "action": "add_role",
+    "discord_user_id": "1300000000000009001",
+    "role_id": "1300000000000000101",
+    "reason": "stripe checkout.session.completed",
+    "ref": "evt_1QLocalCheckout",
+    "result": "ok"
+  }
+]

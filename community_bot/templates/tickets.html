@@ -1,0 +1,8 @@
+{% extends "base.html" %}{% block body %}
+<h1>Tickets</h1>
+{% if tickets %}<table><tr><th>#</th><th>Opened</th><th>Member</th><th>Subject</th><th>Details</th><th>From</th><th>Status</th><th></th></tr>
+{% for t in tickets %}<tr><td>{{ t.id }}</td><td>{{ t.created_at|when }}</td><td>{{ t.username }}</td><td>{{ t.subject }}</td><td>{{ t.body[:160] }}</td><td>{{ t.source }}</td>
+<td class="{{ 'pending' if t.status=='open' else 'ok' }}">{{ t.status }}{% if t.closed_by %} by {{ t.closed_by }}{% endif %}</td>
+<td>{% if t.status=='open' %}<form method="post" action="/admin/tickets/{{ t.id }}/close"><input type="hidden" name="csrf_token" value="{{ csrf }}"><button class="act">Close</button></form>{% endif %}</td></tr>{% endfor %}</table>
+{% else %}<div class="empty">No tickets yet.</div>{% endif %}
+{% endblock %}

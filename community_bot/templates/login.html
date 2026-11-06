@@ -1,0 +1,7 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Admin login</title>
+<style>body{font-family:-apple-system,'Segoe UI',Helvetica,Arial,sans-serif;background:#f6f7fb;display:flex;justify-content:center;padding-top:120px}
+form{background:#fff;border:1px solid #e3e6ee;border-radius:12px;padding:28px;width:340px} input{width:100%;padding:9px;margin:10px 0 14px;border:1px solid #cfd3de;border-radius:7px}
+button{background:#5865f2;color:#fff;border:0;border-radius:7px;padding:9px 16px;cursor:pointer} .err{color:#c4392f;font-size:14px}</style></head>
+<body><form method="post" action="/admin/login"><b>{{ community }} admin</b><br>
+<input type="password" name="token" placeholder="Admin token" autofocus>
+{% if error %}<div class="err">{{ error }}</div>{% endif %}<button>Log in</button></form></body></html>

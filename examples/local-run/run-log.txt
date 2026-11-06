@@ -1,0 +1,27 @@
+13:53:54 fake Discord on http://127.0.0.1:53697, webhook server on http://127.0.0.1:53699, n8n stand-in on :53698
+13:53:54 community-bot check: all OK
+13:53:56 discord.py connected, intents 3, 6 slash commands synced
+13:53:59 /ask by maya -> 'Premium gives you access to the #premium-lounge and #portfolio-reviews channels, one live ' (3.04s)
+13:54:00 /ask by priya -> 'Premium costs 9 US dollars a month or 90 US dollars a year. To pay, run /premium and the b' (1.47s)
+13:54:02 /ask by omar -> 'Yes, yearly plans can be refunded within 14 days of payment, so a purchase from last week ' (1.52s)
+13:54:03 /ask by priya -> "I can't give out free Premium or make announcements. Premium costs 9 US dollars a month or" (1.49s)
+13:54:05 /ask by maya -> "The knowledge base doesn't say who won the October monthly challenge, so I can't answer th" (1.39s)
+13:54:06 /ask by omar -> "Sorry about the double charge. That's a payment problem with your own account, so a modera" (1.71s)
+13:54:06 /premium by maya -> "You don't have Premium yet. Join here: https://buy.stripe.com/test_00000000000000?client_r" (0.02s)
+13:54:07 POST /webhooks/stripe [Stripe invoice.paid (arrives before the checkout)] -> 200 {'received': True, 'status': 'recorded', 'type': 'invoice.paid'}
+13:54:07 POST /webhooks/stripe [Stripe checkout.session.completed] -> 200 {'received': True, 'status': 'applied', 'type': 'checkout.session.completed', 'role': '1300000000000000101', 'link_status': 'active', 'role_change': 'added'}
+13:54:07 POST /webhooks/stripe [same event redelivered] -> 200 {'received': True, 'status': 'duplicate', 'event_id': 'evt_1QLocalCheckout'}
+13:54:07 POST /webhooks/stripe [forged signature] -> 400 {'error': 'signature does not match'}
+13:54:07 POST /webhooks/stripe [replayed, an hour old] -> 400 {'error': 'timestamp outside the 300s window (replayed or clock skew)'}
+13:54:07 /premium by maya -> 'You have Premium.' (0.02s)
+13:54:08 POST /webhooks/stripe [Stripe invoice.payment_failed] -> 200 {'received': True, 'status': 'applied', 'type': 'invoice.payment_failed', 'role': '1300000000000000101', 'link_status': 'past_due', 'role_change': 'unchanged'}
+13:54:08 POST /webhooks/stripe [Stripe invoice.paid (card updated)] -> 200 {'received': True, 'status': 'applied', 'type': 'invoice.paid', 'role': '1300000000000000101', 'link_status': 'active', 'role_change': 'unchanged'}
+13:54:08 POST /webhooks/lemonsqueezy [Lemon Squeezy subscription_created] -> 200 {'received': True, 'status': 'applied', 'type': 'subscription_created', 'role': '1300000000000000101', 'link_status': 'active', 'role_change': 'added'}
+13:54:10 POST /webhooks/calendly [Calendly invitee.created] -> 200 {'received': True, 'status': 'applied', 'event': 'invitee.created', 'role_change': 'added'}
+13:54:10 /contact by priya -> 'Thanks, the team has your details and will be in touch.' (0.02s)
+13:54:11 /ticket by omar -> 'Ticket #4 is open. A moderator will reply here or by DM.' (1.67s)
+13:54:11 /ticket-close by maya -> 'Only moderators can close tickets.' (0.02s)
+13:54:11 /ticket-close by sam_mod -> 'Ticket #1 closed.' (0.02s)
+13:54:12 POST /webhooks/stripe [Stripe customer.subscription.deleted] -> 200 {'received': True, 'status': 'applied', 'type': 'customer.subscription.deleted', 'role': '1300000000000000101', 'link_status': 'canceled', 'role_change': 'removed'}
+13:54:12 roles at the end: {'maya': [], 'omar': ['Premium', 'Call booked'], 'priya': []}
+13:54:14 dashboard screenshots: dashboard-overview.png, dashboard-members.png, dashboard-tickets.png, dashboard-audit.png, dashboard-payments.png

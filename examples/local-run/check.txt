@@ -1,0 +1,16 @@
+OK    token works: logged in as Pixelforge Helper (id 1568262153100591105)
+OK    Server Members intent: on in the portal, used by config
+OK    server: Pixelforge Creators Club
+OK    bot has Manage Roles
+OK    Premium role 'Premium' can be given and removed by the bot
+OK    Call booked role 'Call booked' can be given and removed by the bot
+OK    mod queue channel #mod-queue: bot can read and post
+OK    bookings channel #bookings: bot can read and post
+OK    invite link (minimal permissions): https://discord.com/oauth2/authorize?client_id=1568262153100591105&scope=bot%20applications.commands&permissions=268454912&guild_id=1300000000000000001&disable_guild_select=true
+OK    AI provider anthropic (claude-sonnet-5-5): key found
+OK    STRIPE_WEBHOOK_SECRET: set
+OK    LEMONSQUEEZY_SIGNING_SECRET: set
+WARN  PADDLE_WEBHOOK_SECRET: not set
+OK    CALENDLY_SIGNING_KEY: set
+OK    HOOK_SIGNING_SECRET: set
+OK    ADMIN_TOKEN: set

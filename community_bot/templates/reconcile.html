@@ -1,0 +1,14 @@
+{% extends "base.html" %}{% block body %}
+<h1>Role check</h1>
+<div class="note">Compares the Premium role in Discord with the payment records. Nothing changes until you press Fix.
+{% if not members_intent %} The Server Members intent is off, so only members with a payment record are checked.{% endif %}</div>
+{% if error %}<div class="failed">Discord said: {{ error }}</div>{% endif %}
+<p>Checked {{ plan.checked }} member(s).</p>
+<table><tr><th>Change</th><th>Member</th><th>Role</th></tr>
+{% for uid, r in plan.add %}<tr><td class="added">add (paid, role missing)</td><td class="mono">{{ uid }}</td><td class="mono">{{ r }}</td></tr>{% endfor %}
+{% for uid, r in plan.remove %}<tr><td class="failed">remove (membership ended)</td><td class="mono">{{ uid }}</td><td class="mono">{{ r }}</td></tr>{% endfor %}
+{% for uid, r in plan.unpaid_role %}<tr><td class="pending">has the role with no payment record (left alone)</td><td class="mono">{{ uid }}</td><td class="mono">{{ r }}</td></tr>{% endfor %}
+{% if not plan.add and not plan.remove and not plan.unpaid_role %}<tr><td colspan="3" class="ok">Everything matches.</td></tr>{% endif %}
+</table>
+{% if plan.add or plan.remove %}<form method="post" action="/admin/reconcile" style="margin-top:14px"><input type="hidden" name="csrf_token" value="{{ csrf }}"><button class="act">Fix {{ plan.add|length + plan.remove|length }} difference(s)</button></form>{% endif %}
+{% endblock %}
