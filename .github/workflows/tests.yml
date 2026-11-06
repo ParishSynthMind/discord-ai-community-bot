@@ -17,7 +17,6 @@ jobs:
           pip install -r requirements.txt -r requirements-dev.txt
           pip install -e .
           pip freeze | grep -i -E "uvicorn|websockets|discord|aiohttp|starlette|httpx|wsproto"
-          pip freeze | grep -i -E "uvicorn|websockets|discord|aiohttp|starlette|httpx"
       - name: Lint
         run: ruff check .
       - name: Run tests (Discord, payments and the AI are faked, no keys needed)

@@ -1,3 +1,4 @@
 pytest
 pytest-timeout
 ruff>=0.6
+websockets>=13  # the fake Discord gateway in tests and scripts/local_run.py
