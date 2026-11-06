@@ -31,6 +31,7 @@ community_bot = ["templates/*.html"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 pythonpath = ["."]
+timeout = 60
 
 [tool.ruff]
 line-length = 120

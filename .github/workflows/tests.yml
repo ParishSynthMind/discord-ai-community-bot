@@ -19,4 +19,4 @@ jobs:
       - name: Lint
         run: ruff check .
       - name: Run tests (Discord, payments and the AI are faked, no keys needed)
-        run: pytest -v
+        run: pytest -v --timeout 60 -o faulthandler_timeout=50
