@@ -35,6 +35,8 @@ from starlette.responses import JSONResponse, Response
 from starlette.routing import Route, WebSocketRoute
 from starlette.websockets import WebSocket, WebSocketDisconnect
 
+from .discord_rest import role_position, role_rank
+
 VIEW_CHANNEL, SEND_MESSAGES, EMBED_LINKS = 1 << 10, 1 << 11, 1 << 14
 MANAGE_ROLES, ADMINISTRATOR, MANAGE_MESSAGES = 1 << 28, 1 << 3, 1 << 13
 INTENT_GUILDS, INTENT_MEMBERS, INTENT_PRESENCES, INTENT_MESSAGE_CONTENT = 1, 1 << 1, 1 << 8, 1 << 15
@@ -193,9 +195,8 @@ class FakeDiscord:
             perms = (perms & ~int(ows[user_id]["deny"])) | int(ows[user_id]["allow"])
         return perms
 
-    def _top_position(self, guild_id: str, user_id: str) -> int:
-        pos = {r["id"]: r["position"] for r in self.guilds[guild_id]["roles"]}
-        return max((pos.get(r, 0) for r in self.members[guild_id][user_id]["roles"]), default=0)
+    def _top_position(self, guild_id: str, user_id: str) -> tuple:
+        return role_position(self.guilds[guild_id]["roles"], self.members[guild_id][user_id]["roles"])
 
     # ------------------------------------------------------------------ REST plumbing
     def _rate(self, bucket_key: str, kind: str):
@@ -380,7 +381,7 @@ class FakeDiscord:
         perms = self._base_perms(gid, self.app_id)
         if not perms & MANAGE_ROLES:
             raise FakeError(403, 50013, "Missing Permissions")
-        if role["managed"] or role["id"] == g["id"] or (perms != ~0 and role["position"] >= self._top_position(gid, self.app_id)):
+        if role["managed"] or role["id"] == g["id"] or (perms != ~0 and role_rank(role) >= self._top_position(gid, self.app_id)):
             raise FakeError(403, 50013, "Missing Permissions")
         if method == "PUT" and rid not in member["roles"]:
             member["roles"].append(rid)

@@ -1,0 +1,15 @@
+OK    token works: logged in as Support Bot Demo (id 1568829285169635350)
+OK    Server Members intent: off in the portal, not used by config
+OK    server: Neo Bot Test
+OK    bot has Manage Roles
+OK    Premium role 'Premium' can be given and removed by the bot
+OK    Call booked role 'Call booked' can be given and removed by the bot
+OK    mod queue channel #mod-queue: bot can read and post
+OK    bookings channel #bookings: bot can read and post
+OK    AI provider anthropic (claude-sonnet-5-5): key found
+WARN  STRIPE_WEBHOOK_SECRET: not set
+WARN  LEMONSQUEEZY_SIGNING_SECRET: not set
+WARN  PADDLE_WEBHOOK_SECRET: not set
+WARN  CALENDLY_SIGNING_KEY: not set
+WARN  HOOK_SIGNING_SECRET: not set
+WARN  ADMIN_TOKEN: not set

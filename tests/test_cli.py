@@ -66,3 +66,24 @@ def test_kb_search_cli(capsys, monkeypatch):
     monkeypatch.setenv("NO_KEYCHAIN", "1")
     main(["kb-search", "refund on a yearly plan"])
     assert "FAQ > Refunds (faq.md)" in capsys.readouterr().out.splitlines()[0]
+
+
+@async_test
+async def test_check_tied_positions_use_discord_tiebreak():
+    # Seen live 8 Nov 2026: roles made after the bot joined got the bot's position number.
+    # Discord breaks the tie by id (older = higher), so a newer tied role is below the bot.
+    fake = build_fake()
+    roles = fake.guilds[GUILD]["roles"]
+    bot_role = next(r for r in roles if r["managed"])
+    premium = next(r for r in roles if r["id"] == PREMIUM)
+    premium["position"] = bot_role["position"]
+    premium["id"] = str(int(bot_role["id"]) + 1000)
+    w = make_world(fake=fake)
+    w.settings.premium_role_id = premium["id"]
+    ok, out = await run_check(w, {"ANTHROPIC_API_KEY": "x"})
+    assert ok and "Premium role 'Premium' can be given" in out, out
+    premium["id"] = "1200000000000000777"  # older than the bot's role: ranks above it
+    w = make_world(fake=fake)
+    w.settings.premium_role_id = premium["id"]
+    ok, out = await run_check(w, {"ANTHROPIC_API_KEY": "x"})
+    assert not ok and "drag the bot's role above it" in out

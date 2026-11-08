@@ -1,0 +1,93 @@
+[
+  {
+    "label": "Stripe checkout.session.completed",
+    "http": 200,
+    "reply": {
+      "received": true,
+      "status": "applied",
+      "type": "checkout.session.completed",
+      "role": "1568844858578174052",
+      "link_status": "active",
+      "role_change": "added"
+    },
+    "discord_roles_after": [
+      "Premium"
+    ]
+  },
+  {
+    "label": "same event redelivered",
+    "http": 200,
+    "reply": {
+      "received": true,
+      "status": "duplicate",
+      "event_id": "evt_live_checkout"
+    },
+    "discord_roles_after": [
+      "Premium"
+    ]
+  },
+  {
+    "label": "forged signature",
+    "http": 400,
+    "reply": {
+      "error": "signature does not match"
+    },
+    "discord_roles_after": [
+      "Premium"
+    ]
+  },
+  {
+    "label": "replayed, an hour old",
+    "http": 400,
+    "reply": {
+      "error": "timestamp outside the 300s window (replayed or clock skew)"
+    },
+    "discord_roles_after": [
+      "Premium"
+    ]
+  },
+  {
+    "label": "Stripe invoice.payment_failed (grace: role kept)",
+    "http": 200,
+    "reply": {
+      "received": true,
+      "status": "applied",
+      "type": "invoice.payment_failed",
+      "role": "1568844858578174052",
+      "link_status": "past_due",
+      "role_change": "unchanged"
+    },
+    "discord_roles_after": [
+      "Premium"
+    ]
+  },
+  {
+    "label": "Calendly invitee.created",
+    "http": 200,
+    "reply": {
+      "received": true,
+      "status": "applied",
+      "event": "invitee.created",
+      "role_change": "added"
+    },
+    "discord_roles_after": [
+      "Call booked",
+      "Premium"
+    ]
+  },
+  {
+    "label": "Stripe customer.subscription.deleted (role removed)",
+    "http": 200,
+    "reply": {
+      "received": true,
+      "status": "applied",
+      "type": "customer.subscription.deleted",
+      "role": "1568844858578174052",
+      "link_status": "canceled",
+      "role_change": "removed"
+    },
+    "discord_roles_after": [
+      "Call booked"
+    ]
+  }
+]

@@ -9,3 +9,4 @@ __pycache__/
 PORTFOLIO-LISTING.md
 ACCOUNT-NEEDS.md
 live-run/
+config/live-test.yaml

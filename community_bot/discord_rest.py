@@ -179,9 +179,16 @@ def _json(resp: httpx.Response) -> dict:
         return {}
 
 
-def role_position(roles: List[dict], role_ids) -> int:
-    pos = {r["id"]: r["position"] for r in roles}
-    return max((pos.get(r, 0) for r in role_ids), default=0)
+def role_rank(role: dict) -> tuple:
+    """Where a role sits in the hierarchy. Discord gives new roles the same position
+    number and breaks the tie by id: the older role (lower id) ranks higher."""
+    return (int(role.get("position", 0)), -int(role["id"]))
+
+
+def role_position(roles: List[dict], role_ids) -> tuple:
+    """Rank of the highest of these roles (compare with role_rank, never raw positions)."""
+    ranks = [role_rank(r) for r in roles if r["id"] in set(role_ids)]
+    return max(ranks, default=(0, 0))
 
 
 def guild_permissions(guild: dict, roles: List[dict], member_role_ids) -> int:

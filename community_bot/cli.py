@@ -18,6 +18,7 @@ from .discord_rest import (
     guild_permissions,
     invite_url,
     role_position,
+    role_rank,
 )
 
 GATEWAY_MEMBERS_FLAGS = (1 << 14) | (1 << 15)  # GATEWAY_GUILD_MEMBERS, _LIMITED
@@ -66,7 +67,7 @@ async def check(settings, secrets, rest: Optional[DiscordREST] = None, out=print
                 line("FAIL", f"{label} role {rid} does not exist in this server (check config/bot.yaml)")
             elif role.get("managed"):
                 line("FAIL", f"{label} role '{role['name']}' is managed by an integration and can't be given")
-            elif role["position"] >= top and perms != ~0:
+            elif role_rank(role) >= top and perms != ~0:
                 line("FAIL", f"{label} role '{role['name']}' is above the bot's own role: in Server Settings > Roles, "
                              "drag the bot's role above it")
             else:
