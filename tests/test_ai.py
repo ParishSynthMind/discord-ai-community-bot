@@ -82,7 +82,7 @@ async def test_not_found_hands_over_only_when_configured():
 async def test_needs_human_hands_over():
     svc, *_ = service([Answer("needs_human", "A moderator will help with your charge.", [], 1, 1)])
     r = await svc.ask("u1", "I was charged twice!")
-    assert r.handover and "passed this to the moderators" in r.reply
+    assert r.handover and "AI assistant, so I've passed this to a human moderator" in r.reply
 
 
 @async_test

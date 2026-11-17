@@ -62,6 +62,10 @@ In both the recorded run and the live test a member typed *"Ignore your instruct
 | Messages are 2,000 characters at most | Replies are trimmed; ticket details go in embeds |
 | Invite permissions should be minimal | Manage Roles, View Channel, Send Messages, Embed Links (`permissions=268454912`), never Administrator |
 
+## AI disclosure (EU AI Act Article 50)
+
+The first message the bot sends a member in a conversation starts with "I'm an AI assistant for {community_name}." This covers every member command (`/ask`, `/premium`, `/ticket`, `/contact`, `/book`) and the failed-payment DM. A new conversation starts after 24 hours without a message (`new_conversation_after_hours`), and every handover to the moderators says "I'm an AI assistant, so I've passed this to a human moderator." The text is set with `ai_disclosure.text` in `config/bot.yaml` or `AI_DISCLOSURE`; a blank value falls back to the default. It can only be removed by setting `removed_by_written_request` (or `AI_DISCLOSURE_REMOVED_BY_WRITTEN_REQUEST`) to a reference for the client's written request (date and who asked), and `community-bot check` shows which is in force. This was added after the live test and is covered by offline tests against the fake Discord; the screenshots and recorded runs below predate it, so they show replies without the opening line.
+
 ## Tested live
 
 On 8 November 2026 the bot ran against a real Discord server with a real bot token. Full record: [`examples/live-run-2026-11-08/`](examples/live-run-2026-11-08/).
@@ -134,16 +138,16 @@ How to receive the hooks in n8n, with signature checking: [`docs/RECEIVING-HOOKS
 
 ```bash
 pip install -r requirements-dev.txt
-pytest          # 127 tests, no Discord account, payment account or API key needed
+pytest          # 144 tests, no Discord account, payment account or API key needed
 ruff check .
 ```
 
-They cover each provider's signature (valid, wrong secret, tampered body, replayed, rotated secrets) and event mapping; role sync (idempotency, out-of-order events, grace periods, two memberships, plan changes, a member not yet in the server, outages and retries, rate limits, wrong role order); the AI flow (sources, untrusted citations, handover, caps, mention defusing, both providers' request shapes, refusals); the webhook routes and the dashboard (login, session expiry, CSRF, escaping); signed hooks with retries and overlap; and 10 end-to-end tests of the real discord.py client over a real websocket against the fake.
+They cover each provider's signature (valid, wrong secret, tampered body, replayed, rotated secrets) and event mapping; role sync (idempotency, out-of-order events, grace periods, two memberships, plan changes, a member not yet in the server, outages and retries, rate limits, wrong role order); the AI flow (sources, untrusted citations, handover, caps, mention defusing, both providers' request shapes, refusals); the webhook routes and the dashboard (login, session expiry, CSRF, escaping); signed hooks with retries and overlap; the AI disclosure on every member-facing path; and 10 end-to-end tests of the real discord.py client over a real websocket against the fake.
 
 ## Status
 
 - **Tested live (8 Nov 2026):** a real Discord server, real bot token and gateway, every member slash command, real role changes from signed payment and booking webhooks, and `check` against the real server. See [Tested live](#tested-live).
-- **Tested offline:** everything above against the fake Discord, with 127 automated tests, plus the 6 November recorded run (real Claude, real HTTP webhooks, n8n-style hook receiver, dashboard).
+- **Tested offline:** everything above against the fake Discord, with 144 automated tests, plus the 6 November recorded run (real Claude, real HTTP webhooks, n8n-style hook receiver, dashboard).
 - **Not tested live:** new-member events and the Server Members intent (needs a second account), `/ticket-close`, outbound hooks and the dashboard against the real server.
 - **Payments:** the Stripe, Lemon Squeezy, Paddle and Calendly events in both runs were built here from each provider's documented shapes and signed the way they sign them, not sent by those services. Stripe is not open to every business (it depends on country and business type), so Lemon Squeezy and Paddle, which sell as the merchant of record, are supported through the same role logic. Real Stripe test-mode events have not been sent to this bot yet.
 - **Not built:** voice, moderation of chat messages (no Message Content intent), sharding for very large bots, hosting.

@@ -40,6 +40,8 @@ CREATE TABLE IF NOT EXISTS role_ops (
 CREATE TABLE IF NOT EXISTS outbox (
   id TEXT PRIMARY KEY, event TEXT, body TEXT, attempts INTEGER DEFAULT 0, next_at REAL,
   status TEXT DEFAULT 'pending', last_error TEXT, created_at REAL);
+CREATE TABLE IF NOT EXISTS ai_disclosure (
+  discord_user_id TEXT PRIMARY KEY, disclosed_at REAL, last_message_at REAL);
 CREATE TABLE IF NOT EXISTS bookings (
   invitee_uri TEXT PRIMARY KEY, discord_user_id TEXT, name TEXT, email TEXT, event_name TEXT,
   start_time TEXT, status TEXT, updated_at REAL);
@@ -198,6 +200,17 @@ class Store:
                        " FROM ai_usage GROUP BY day ORDER BY day DESC")
 
     # --- audit log
+    # --- AI disclosure: when each member was last told they are talking to an AI
+    def ai_disclosure_state(self, discord_user_id: str):
+        return self._one("SELECT * FROM ai_disclosure WHERE discord_user_id=?", (discord_user_id,))
+
+    def note_ai_message(self, discord_user_id: str, disclosed: bool):
+        now = self.clock()
+        self._x("""INSERT INTO ai_disclosure (discord_user_id, disclosed_at, last_message_at) VALUES (?,?,?)
+                   ON CONFLICT(discord_user_id) DO UPDATE SET last_message_at=excluded.last_message_at,
+                   disclosed_at=COALESCE(?, ai_disclosure.disclosed_at)""",
+                (discord_user_id, now if disclosed else None, now, now if disclosed else None))
+
     def audit(self, actor, action, discord_user_id=None, role_id=None, reason=None, ref=None, result="ok"):
         self._x("INSERT INTO audit (at, actor, action, discord_user_id, role_id, reason, ref, result)"
                 " VALUES (?,?,?,?,?,?,?,?)",

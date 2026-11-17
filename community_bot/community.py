@@ -8,6 +8,7 @@ from typing import Optional
 from .ai import AskService, clean_for_discord, make_provider
 from .calendly import Bookings
 from .config import Secrets, Settings
+from .disclosure import Disclosure
 from .discord_rest import DiscordError, DiscordREST
 from .hooks import Hooks
 from .kb import KnowledgeBase
@@ -26,7 +27,9 @@ class Community:
         self.rest = rest
         self.secrets = secrets
         self.hooks = Hooks(settings, store, secrets.get("HOOK_SIGNING_SECRET"), client=hook_client, clock=clock)
-        self.membership = Membership(settings, store, rest, hooks=self.hooks, notify=self.notify, clock=clock)
+        self.disclosure = Disclosure(settings, store, clock=clock)
+        self.membership = Membership(settings, store, rest, hooks=self.hooks, notify=self.notify, clock=clock,
+                                     disclosure=self.disclosure)
         self.bookings = Bookings(settings, store, self.membership, hooks=self.hooks, post=self.post)
         self.kb = KnowledgeBase.load(settings.kb_dir)
         self._provider = provider

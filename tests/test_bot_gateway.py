@@ -76,7 +76,8 @@ async def test_ask_defers_then_answers_with_sources():
         await w.fake.wait_reply(it)
         assert it.response_type == 5 and not it.errors  # acknowledged inside 3 s, then a follow-up
         text = it.followups[0]["content"]
-        assert text.startswith("Premium gets the lounge") and "Sources: Membership > What Premium includes" in text
+        assert text.startswith("I'm an AI assistant for Pixelforge Creators Club.\n\nPremium gets the lounge")
+        assert "Sources: Membership > What Premium includes" in text
         assert it.followups[0]["allowed_mentions"] == {"parse": []}
 
 

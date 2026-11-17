@@ -32,6 +32,14 @@ ai:
 
 knowledge_base: knowledge_base
 
+ai_disclosure:
+  # EU AI Act Article 50: the first message to a member in a conversation says it is an AI.
+  text: ""                              # blank = "I'm an AI assistant for <community_name>."
+  new_conversation_after_hours: 24      # after this long without a message, say it again
+  # The ONLY way to switch it off: a reference to the client's written request (date and
+  # who asked). Leaving text blank does not remove it.
+  removed_by_written_request: ""
+
 membership:
   # Which role each paid plan gives. Keys are the provider's price/variant ids;
   # anything not listed gets roles.premium.

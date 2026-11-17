@@ -7,6 +7,7 @@ import sys
 from typing import List, Optional
 
 from .config import Secrets, load_settings
+from .disclosure import disclosure_line
 from .discord_rest import (
     EMBED_LINKS,
     MANAGE_ROLES,
@@ -97,6 +98,12 @@ async def check(settings, secrets, rest: Optional[DiscordREST] = None, out=print
     if provider_key:
         line("OK" if secrets.get(provider_key) else "FAIL",
              f"AI provider {settings.ai.provider} ({settings.ai.model}): key {'found' if secrets.get(provider_key) else 'missing'}")
+    disclosure = disclosure_line(settings)
+    if disclosure:
+        line("OK", f"AI disclosure on the first message: {disclosure!r}")
+    else:
+        line("WARN", "AI disclosure removed by written request: "
+                     f"{settings.ai_disclosure_removed_by_written_request.strip()}")
     for name in ("STRIPE_WEBHOOK_SECRET", "LEMONSQUEEZY_SIGNING_SECRET", "PADDLE_WEBHOOK_SECRET",
                  "CALENDLY_SIGNING_KEY", "HOOK_SIGNING_SECRET", "ADMIN_TOKEN"):
         line("OK" if secrets.get(name) else "WARN", f"{name}: {'set' if secrets.get(name) else 'not set'}")

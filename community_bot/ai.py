@@ -71,6 +71,8 @@ class Answer:
 
 
 REFUSED = "I can't help with that one, but a moderator can."
+# Said on every handover (EU AI Act Article 50): an AI is passing the member to a person.
+HANDOVER = "I'm an AI assistant, so I've passed this to a human moderator."
 
 
 def parse(text: str, tokens_in: int, tokens_out: int) -> Answer:
@@ -225,15 +227,13 @@ class AskService:
         question = question.strip()[:1000]
         reason = self.cap_reason(user_id)
         if reason:
-            return AskResult("capped", f"I can't answer more today: {reason}. I've passed your question to the "
-                                       "moderators instead.", handover=True)
+            return AskResult("capped", f"I can't answer more today: {reason}. {HANDOVER}", handover=True)
         hits = self.kb.search(question, k=self.s.ai.max_sections)
         try:
             ans = await self.provider.answer(question, hits)
         except Exception as exc:
             log.warning("AI call failed: %s", exc)
-            return AskResult("error", "I couldn't get an answer just now, so I've passed this to the moderators.",
-                             handover=True)
+            return AskResult("error", f"I couldn't get an answer just now. {HANDOVER}", handover=True)
         self.store.add_ai_call(self.today(), user_id, ans.tokens_in, ans.tokens_out)
         valid = [c for c in dict.fromkeys(ans.citations) if 1 <= c <= len(hits)]
         status = ans.status
@@ -246,6 +246,6 @@ class AskService:
         if status == "answered":
             reply += "\n\n-# Sources: " + "; ".join(sources)
         elif handover:
-            reply += "\nI've passed this to the moderators."
+            reply += "\n" + HANDOVER
         return AskResult(status, reply[:2000], sources if status == "answered" else [], handover,
                          ans.tokens_in, ans.tokens_out)

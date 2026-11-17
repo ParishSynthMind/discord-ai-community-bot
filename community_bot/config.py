@@ -100,6 +100,11 @@ class Settings:
     booking_url: str = ""
     calendly_question: str = "Discord username"
     db_path: Path = ROOT / "community.db"
+    # EU AI Act Article 50: the AI disclosure line (blank = "I'm an AI assistant for
+    # <community_name>."). Only removed when removed_by_written_request holds a reference.
+    ai_disclosure: str = ""
+    ai_disclosure_removed_by_written_request: str = ""
+    ai_new_conversation_after_hours: float = 24.0
     # Where the Discord API and gateway live. Only changed to point at the fake in tests.
     api_base: str = "https://discord.com/api/v10"
     gateway_url: str = ""
@@ -128,6 +133,7 @@ def load_settings(path: Optional[Path] = None, env=None) -> Settings:
     membership = raw.get("membership") or {}
     hooks = raw.get("hooks") or {}
     calendly = raw.get("calendly") or {}
+    disclosure = raw.get("ai_disclosure") or {}
     kb = Path(raw.get("knowledge_base") or "knowledge_base")
     settings = Settings(
         community_name=raw.get("community_name", "Community"),
@@ -150,6 +156,10 @@ def load_settings(path: Optional[Path] = None, env=None) -> Settings:
         db_path=Path(env.get("BOT_DB") or ROOT / "community.db"),
         api_base=env.get("DISCORD_API_BASE") or "https://discord.com/api/v10",
         gateway_url=env.get("DISCORD_GATEWAY_URL") or "",
+        ai_disclosure=str(env.get("AI_DISCLOSURE") or disclosure.get("text") or ""),
+        ai_disclosure_removed_by_written_request=str(env.get("AI_DISCLOSURE_REMOVED_BY_WRITTEN_REQUEST")
+                                                     or disclosure.get("removed_by_written_request") or ""),
+        ai_new_conversation_after_hours=float(disclosure.get("new_conversation_after_hours", 24)),
     )
     if env.get("MEMBERS_INTENT"):
         settings.members_intent = env["MEMBERS_INTENT"] == "1"

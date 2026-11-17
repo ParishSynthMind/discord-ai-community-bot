@@ -17,13 +17,14 @@ DAY = 86400
 
 
 class Membership:
-    def __init__(self, settings, store, rest, hooks=None, notify=None, clock=None):
+    def __init__(self, settings, store, rest, hooks=None, notify=None, clock=None, disclosure=None):
         self.s = settings
         self.store = store
         self.rest = rest
         self.hooks = hooks
         self.notify = notify  # async callable(text) posting to the mod queue, best effort
         self.clock = clock or store.clock
+        self.disclosure = disclosure  # AI disclosure on the first message to a member
 
     # ------------------------------------------------------------------ decisions
     def wants_role(self, link: Optional[dict]) -> bool:
@@ -250,7 +251,10 @@ class Membership:
                 log.warning("mod-queue notice failed", exc_info=True)
 
     async def _dm(self, user_id: str, text: str):
+        opening = self.disclosure.opening(user_id) if self.disclosure else ""
         try:
-            await self.rest.dm(user_id, text)
+            await self.rest.dm(user_id, opening + text)
+            if self.disclosure:
+                self.disclosure.sent(user_id, opening)
         except DiscordError as exc:  # DMs closed (50007) or not in the server: not worth failing over
             self.store.audit("webhook", "dm", user_id, None, text[:80], None, f"not delivered: {exc.message}")

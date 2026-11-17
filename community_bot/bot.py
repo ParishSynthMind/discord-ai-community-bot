@@ -64,6 +64,18 @@ def _who(interaction: discord.Interaction):
     return str(interaction.user.id), interaction.user.name
 
 
+async def _reply(c: Community, interaction: discord.Interaction, uid: str, text: str, followup: bool = True, **kw):
+    """Every message to a member goes through here, so the first one in a conversation
+    starts with the AI disclosure (EU AI Act Article 50)."""
+    opening = c.disclosure.opening(uid)
+    text = (opening + text)[:2000]  # Discord's limit; the disclosure is at the front, so it survives
+    if followup:
+        await interaction.followup.send(text, **kw)
+    else:
+        await interaction.response.send_message(text, **kw)
+    c.disclosure.sent(uid, opening)
+
+
 def register_commands(bot: CommunityBot):
     c = bot.c
     guild = bot.guild_obj
@@ -81,7 +93,7 @@ def register_commands(bot: CommunityBot):
         if result.handover:
             tid = await c.open_ticket(uid, name, question[:80], question, f"/ask ({result.status})")
             reply += f" (ticket #{tid})"
-        await interaction.followup.send(reply[:2000], allowed_mentions=NO_PINGS)
+        await _reply(c, interaction, uid, reply, allowed_mentions=NO_PINGS)
         await c.hooks.flush()
 
     @bot.tree.command(name="ticket", description="Open a ticket for the moderators", guild=guild)
@@ -91,8 +103,8 @@ def register_commands(bot: CommunityBot):
         uid, name = _who(interaction)
         await interaction.response.defer(ephemeral=True, thinking=True)
         tid = await c.open_ticket(uid, name, subject, details, "/ticket")
-        await interaction.followup.send(f"Ticket #{tid} is open. A moderator will reply here or by DM.",
-                                        ephemeral=True)
+        await _reply(c, interaction, uid, f"Ticket #{tid} is open. A moderator (a person) will reply here or by DM.",
+                     ephemeral=True)
         await c.hooks.flush()
 
     @bot.tree.command(name="premium", description="Your Premium membership, or how to get it", guild=guild)
@@ -106,13 +118,13 @@ def register_commands(bot: CommunityBot):
             extra = " Your Premium role was missing and has been put back." if outcome == "added" else ""
             note = {"canceling": " It is set to end at the close of this billing period.",
                     "past_due": " Your last payment failed: please update your card to keep it."}.get(link["status"], "")
-            await interaction.followup.send(f"You have Premium.{note}{extra}", ephemeral=True)
+            await _reply(c, interaction, uid, f"You have Premium.{note}{extra}", ephemeral=True)
             return
         url = c.s.checkout_url.format(discord_user_id=uid) if c.s.checkout_url else ""
         msg = "You don't have Premium yet."
         if url:
             msg += f" Join here: {url}\nThe link is tied to your Discord account, so the role arrives by itself."
-        await interaction.followup.send(msg, ephemeral=True)
+        await _reply(c, interaction, uid, msg, ephemeral=True)
 
     @bot.tree.command(name="contact", description="Leave your email for the team (sales or partnerships)",
                       guild=guild)
@@ -122,20 +134,21 @@ def register_commands(bot: CommunityBot):
         uid, name = _who(interaction)
         await interaction.response.defer(ephemeral=True, thinking=True)
         problem = await c.capture_lead(uid, name, email, message)
-        await interaction.followup.send(problem or "Thanks, the team has your details and will be in touch.",
-                                        ephemeral=True)
+        await _reply(c, interaction, uid, problem or "Thanks, the team has your details and will be in touch.",
+                     ephemeral=True)
         await c.hooks.flush()
 
     @bot.tree.command(name="book", description="Book a call with the team", guild=guild)
     async def book(interaction: discord.Interaction):
         uid, _ = _who(interaction)
         if not c.s.booking_url:
-            await interaction.response.send_message("Bookings aren't open right now.", ephemeral=True)
+            await _reply(c, interaction, uid, "Bookings aren't open right now.", followup=False, ephemeral=True)
             return
-        await interaction.response.send_message(
+        await _reply(
+            c, interaction, uid,
             f"Pick a time here: {c.s.booking_url.format(discord_user_id=uid)}\n"
             "The link is tied to your Discord account, so you'll get the Call booked role when it's confirmed.",
-            ephemeral=True)
+            followup=False, ephemeral=True)
 
     @bot.tree.command(name="ticket-close", description="Close a ticket (moderators)", guild=guild)
     @app_commands.default_permissions(manage_messages=True)
