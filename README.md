@@ -138,7 +138,7 @@ How to receive the hooks in n8n, with signature checking: [`docs/RECEIVING-HOOKS
 
 ```bash
 pip install -r requirements-dev.txt
-pytest          # 144 tests, no Discord account, payment account or API key needed
+pytest          # 145 tests, no Discord account, payment account or API key needed
 ruff check .
 ```
 
@@ -147,7 +147,7 @@ They cover each provider's signature (valid, wrong secret, tampered body, replay
 ## Status
 
 - **Tested live (8 Nov 2026):** a real Discord server, real bot token and gateway, every member slash command, real role changes from signed payment and booking webhooks, and `check` against the real server. See [Tested live](#tested-live).
-- **Tested offline:** everything above against the fake Discord, with 144 automated tests, plus the 6 November recorded run (real Claude, real HTTP webhooks, n8n-style hook receiver, dashboard).
+- **Tested offline:** everything above against the fake Discord, with 145 automated tests, plus the 6 November recorded run (real Claude, real HTTP webhooks, n8n-style hook receiver, dashboard).
 - **Not tested live:** new-member events and the Server Members intent (needs a second account), `/ticket-close`, outbound hooks and the dashboard against the real server.
 - **Payments:** the Stripe, Lemon Squeezy, Paddle and Calendly events in both runs were built here from each provider's documented shapes and signed the way they sign them, not sent by those services. Stripe is not open to every business (it depends on country and business type), so Lemon Squeezy and Paddle, which sell as the merchant of record, are supported through the same role logic. Real Stripe test-mode events have not been sent to this bot yet.
 - **Not built:** voice, moderation of chat messages (no Message Content intent), sharding for very large bots, hosting.

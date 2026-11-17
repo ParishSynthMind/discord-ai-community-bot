@@ -252,9 +252,15 @@ class Membership:
 
     async def _dm(self, user_id: str, text: str):
         opening = self.disclosure.opening(user_id) if self.disclosure else ""
+        if self.disclosure:
+            self.disclosure.sent(user_id, opening)
         try:
             await self.rest.dm(user_id, opening + text)
-            if self.disclosure:
-                self.disclosure.sent(user_id, opening)
         except DiscordError as exc:  # DMs closed (50007) or not in the server: not worth failing over
+            if self.disclosure:
+                self.disclosure.unsent(user_id, opening)
             self.store.audit("webhook", "dm", user_id, None, text[:80], None, f"not delivered: {exc.message}")
+        except Exception:
+            if self.disclosure:
+                self.disclosure.unsent(user_id, opening)
+            raise

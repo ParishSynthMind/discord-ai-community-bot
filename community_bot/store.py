@@ -211,6 +211,9 @@ class Store:
                    disclosed_at=COALESCE(?, ai_disclosure.disclosed_at)""",
                 (discord_user_id, now if disclosed else None, now, now if disclosed else None))
 
+    def forget_ai_disclosure(self, discord_user_id: str):
+        self._x("UPDATE ai_disclosure SET disclosed_at=NULL WHERE discord_user_id=?", (discord_user_id,))
+
     def audit(self, actor, action, discord_user_id=None, role_id=None, reason=None, ref=None, result="ok"):
         self._x("INSERT INTO audit (at, actor, action, discord_user_id, role_id, reason, ref, result)"
                 " VALUES (?,?,?,?,?,?,?,?)",

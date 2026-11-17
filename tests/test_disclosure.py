@@ -169,3 +169,16 @@ async def test_check_shows_the_disclosure_and_flags_a_removal():
     _, out = await run_check(w, {"ANTHROPIC_API_KEY": "x"})
     assert "AI disclosure removed by written request: 2026-11-17 email from the client" in out
     await w.rest.aclose()
+
+
+# ------------------------------------------------------------------ ordering (CI race, 17 Nov)
+def test_line_is_recorded_before_the_send_and_undone_if_it_fails():
+    from community_bot.disclosure import Disclosure
+    w = make_world()
+    d = Disclosure(w.settings, w.store)
+    first = d.opening(MAYA)
+    assert first == LINE + "\n\n"
+    d.sent(MAYA, first)                 # recorded before the network call
+    assert d.opening(MAYA) == ""        # a second command arriving mid-send doesn't repeat it
+    d.unsent(MAYA, first)               # the send failed
+    assert d.opening(MAYA) == LINE + "\n\n"

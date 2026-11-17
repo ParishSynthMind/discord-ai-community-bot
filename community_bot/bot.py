@@ -69,11 +69,15 @@ async def _reply(c: Community, interaction: discord.Interaction, uid: str, text:
     starts with the AI disclosure (EU AI Act Article 50)."""
     opening = c.disclosure.opening(uid)
     text = (opening + text)[:2000]  # Discord's limit; the disclosure is at the front, so it survives
-    if followup:
-        await interaction.followup.send(text, **kw)
-    else:
-        await interaction.response.send_message(text, **kw)
-    c.disclosure.sent(uid, opening)
+    c.disclosure.sent(uid, opening)  # recorded before the await, so a quick second command can't repeat it
+    try:
+        if followup:
+            await interaction.followup.send(text, **kw)
+        else:
+            await interaction.response.send_message(text, **kw)
+    except Exception:
+        c.disclosure.unsent(uid, opening)
+        raise
 
 
 def register_commands(bot: CommunityBot):

@@ -34,5 +34,11 @@ class Disclosure:
         return line + "\n\n"
 
     def sent(self, user_id: str, opening: str):
-        """Call after the message was delivered, so a failed send is disclosed next time."""
+        """Call BEFORE awaiting the send, so a second message that arrives while the first is
+        still being delivered doesn't repeat the line. If the send fails, call `unsent`."""
         self.store.note_ai_message(user_id, disclosed=bool(opening))
+
+    def unsent(self, user_id: str, opening: str):
+        """The message carrying the line was not delivered: show it on the next message."""
+        if opening:
+            self.store.forget_ai_disclosure(user_id)
