@@ -9,6 +9,8 @@ A Discord bot for a paid community, in Python with discord.py:
 - **CRM and workflow hooks.** New members, tickets, sales leads (`/contact`), Premium changes and Calendly bookings are sent as signed JSON to n8n, Make, Zapier or a CRM. A Calendly booking gives a "Call booked" role and posts a notice.
 - **Admin dashboard.** Members and their memberships, payments, tickets, the audit log of every role change, retry queues, and a role check that compares Discord with the payment records.
 
+**Status:** tested live on a real Discord server on 8 November 2026 (real bot token, all slash commands, real role changes). The Stripe, Lemon Squeezy, Paddle and Calendly events were signed test events built here, not sent by those services; new-member events, ticket closing, the outbound hooks and the dashboard were not tested against the real server.
+
 ![Slash commands answered in a real Discord server](media/live-slash-commands.png)
 
 *Tested live on a real Discord server on 8 November 2026: a member typing the slash commands, Claude Sonnet 5.5 answering from the server guide, tickets and paid roles handled by the bot. Details in [Tested live](#tested-live).*
